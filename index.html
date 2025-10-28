@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🍽 Recipe Finder</title>
+  <style>
+   * { box-sizing: border-box; }
+
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  background: linear-gradient(135deg, #ffecd2, #fcb69f);
+  color: #333;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+h1 {
+  margin-top: 30px;
+  font-size: 2.3em;
+  color: #2d3748;
+  letter-spacing: 1px;
+}
+
+/* 🔍 Search Box */
+.search-box {
+  margin: 25px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+input {
+  padding: 12px 16px;
+  width: 280px;
+  border: 2px solid #f97316;
+  border-radius: 25px;
+  outline: none;
+  font-size: 1em;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #fb923c;
+  box-shadow: 0 0 5px rgba(249, 115, 22, 0.5);
+}
+
+button {
+  padding: 12px 18px;
+  background: #f97316;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+button:hover { background: #ea580c; }
+
+/* 🍲 Recipe Cards */
+#recipes, #favorites {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.recipe {
+  border: none;
+  border-radius: 14px;
+  width: 230px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: 0.3s transform ease;
+  overflow: hidden;
+}
+
+.recipe:hover { transform: translateY(-6px); }
+
+.recipe img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.recipe h3, .recipe h4 {
+  margin: 10px 0;
+  color: #1e293b;
+}
+
+.recipe button {
+  margin: 5px;
+  padding: 8px 14px;
+  font-size: 0.9em;
+  border-radius: 20px;
+  background: #f97316;
+}
+
+.recipe button:hover { background: #ea580c; }
+
+#favorites {
+  border-top: 2px solid #f97316;
+  margin-top: 20px;
+  padding-top: 20px;
+  background: #fff7ed;
+}
+
+/* 🧡 Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal.show { display: flex; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 16px;
+  max-width: 650px;
+  width: 90%;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  animation: scaleUp 0.3s ease;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.9); }
+  to { transform: scale(1); }
+}
+
+.modal-header {
+  position: relative;
+  background: linear-gradient(135deg, #f97316, #f59e0b);
+  color: white;
+}
+
+.modal-header img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-bottom: 3px solid rgba(255,255,255,0.5);
+  filter: brightness(75%);
+}
+
+.modal-header h3 {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
+  margin: 0;
+  font-size: 1.8em;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  z-index: 2;
+}
+
+/* 🧭 Fix Close Button */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
+  font-size: 22px;
+  background: rgba(0,0,0,0.6);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.close-btn:hover {
+  background: rgba(0,0,0,0.8);
+  transform: rotate(90deg);
+}
+
+/* 📖 Modal Body */
+.modal-body {
+  padding: 22px;
+  overflow-y: auto;
+  flex: 1;
+  background: #fff;
+}
+
+.modal-body h4 {
+  color: #f97316;
+  margin-top: 12px;
+  margin-bottom: 8px;
+}
+
+.modal-body ul {
+  list-style: disc;
+  padding-left: 25px;
+  margin: 0 0 18px;
+}
+
+.modal-body p {
+  line-height: 1.8;
+  color: #374151;
+  text-align: left;
+  padding-bottom: 12px;
+}
+
+/* 📱 Responsive */
+@media (max-width: 600px) {
+  input { width: 200px; }
+  .recipe { width: 170px; }
+  .modal-header h3 { font-size: 1.4em; }
+}
+
+footer {
+  margin-top: auto;
+  background: #1e293b;
+  color: #f8fafc;
+  text-align: center;
+  padding: 15px 10px;
+  font-size: 0.9em;
+  letter-spacing: 0.5px;
+  border-top: 3px solid #f97316;
+}
+
+footer a {
+  color: #f97316;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+footer a:hover {
+  color: #fb923c;
+  text-decoration: underline;
+}
+
+  </style>
+</head>
+<body>
+
+  <h1>🍽 Recipe Finder</h1>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Search by ingredient or name...">
+    <button id="searchBtn">Search</button>
+  </div>
+
+  <div id="recipes"></div>
+
+  <h2>❤ Favorites</h2>
+  <div id="favorites"></div>
+
+  <div class="modal" id="recipeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close-btn" id="closeModal">✖</button>
+        <img id="modalImg" src="" alt="">
+        <h3 id="modalTitle"></h3>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© <span id="year"></span> Recipe Finder | Built with ❤️ by 
+      <a href="#" target="_blank">Kaima</a>
+    </p>
+  </footer>
+
+  <script>
+    const searchBtn = document.getElementById("searchBtn");
+    const searchInput = document.getElementById("searchInput");
+    const recipesDiv = document.getElementById("recipes");
+    const favoritesDiv = document.getElementById("favorites");
+    const modal = document.getElementById("recipeModal");
+    const closeModal = document.getElementById("closeModal");
+    const modalImg = document.getElementById("modalImg");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBody = document.getElementById("modalBody");
+
+    let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    searchBtn.addEventListener("click", () => {
+      const query = searchInput.value.trim();
+      if (query) searchRecipes(query);
+    });
+
+    async function searchRecipes(query) {
+      const res = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`);
+      const data = await res.json();
+      displayRecipes(data.meals);
+    }
+
+    function displayRecipes(meals) {
+      recipesDiv.innerHTML = meals
+        ? meals.map(meal => `
+            <div class="recipe">
+              <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
+              <h3>${meal.strMeal}</h3>
+              <button onclick="toggleFavorite('${meal.idMeal}', '${meal.strMeal}', '${meal.strMealThumb}')">
+                ${favorites.some(f => f.id === meal.idMeal) ? 'Remove ❤' : 'Add ❤'}
+              </button>
+              <button onclick="viewRecipe('${meal.idMeal}')">View Recipe 🍳</button>
+            </div>
+          `).join('')
+        : '<p>No recipes found.</p>';
+    }
+
+    async function viewRecipe(id) {
+      const res = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`);
+      const data = await res.json();
+      const meal = data.meals[0];
+
+      modalImg.src = meal.strMealThumb;
+      modalTitle.textContent = meal.strMeal;
+
+      // 🧂 Ingredients
+      let ingredients = '';
+      for (let i = 1; i <= 20; i++) {
+        const ingredient = meal[`strIngredient${i}`];
+        const measure = meal[`strMeasure${i}`];
+        if (ingredient && ingredient.trim() !== '') {
+          ingredients += `<li>${ingredient} - ${measure}</li>`;
+        }
+      }
+
+      modalBody.innerHTML = `
+        <h4>🥄 Ingredients</h4>
+        <ul>${ingredients}</ul>
+        <h4>📜 Instructions</h4>
+        <p>${meal.strInstructions}</p>
+      `;
+
+      modal.classList.add("show");
+    }
+
+    closeModal.addEventListener("click", () => modal.classList.remove("show"));
+    modal.addEventListener("click", e => { if (e.target === modal) modal.classList.remove("show"); });
+
+    function toggleFavorite(id, name, img) {
+      const index = favorites.findIndex(f => f.id === id);
+      if (index === -1) favorites.push({ id, name, img });
+      else favorites.splice(index, 1);
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      displayFavorites();
+      searchRecipes(searchInput.value);
+    }
+
+    function displayFavorites() {
+      favoritesDiv.innerHTML = favorites.length
+        ? favorites.map(fav => `
+            <div class="recipe">
+              <img src="${fav.img}" alt="${fav.name}">
+              <h4>${fav.name}</h4>
+              <button onclick="toggleFavorite('${fav.id}', '${fav.name}', '${fav.img}')">Remove ❌</button>
+              <button onclick="viewRecipe('${fav.id}')">View Recipe 🍳</button>
+            </div>
+          `).join('')
+        : '<p>No favorites yet. Start adding some! ❤️</p>';
+    }
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+    displayFavorites();
+  </script>
+</body>
+</html>
